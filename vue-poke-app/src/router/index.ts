@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import PokemonListPage from "../components/pages/PokemonListPage.vue";
-import PokemonDetailPage from "../components/pages/PokemonDetailPage.vue";
+import PokemonListPage from "@pages/PokemonListPage.vue";
+import PokemonDetailPage from "@pages/PokemonDetailPage.vue";
 
 const routes = [
   { path: "/", name: "list", component: PokemonListPage },
