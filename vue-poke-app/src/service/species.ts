@@ -27,7 +27,7 @@ const fetchName = async (
 };
 
 // 「分類」を取得する関数
-const fetchSpecies = async (
+const fetchGenera = async (
   id: string,
   _pokemonSpecies?: PokemonSpecies
 ): Promise<string | undefined> => {
@@ -43,4 +43,4 @@ const fetchSpecies = async (
   return genera;
 };
 
-export { fetchPokemonSpecies, fetchName, fetchSpecies };
+export { fetchPokemonSpecies, fetchName, fetchGenera };

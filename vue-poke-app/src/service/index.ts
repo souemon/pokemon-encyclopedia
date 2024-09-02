@@ -6,11 +6,7 @@ import {
   fetchPokemon,
   fetchPokemonList,
 } from "@/service/pokemon";
-import {
-  fetchPokemonSpecies,
-  fetchName,
-  fetchSpecies,
-} from "@/service/species";
+import { fetchPokemonSpecies, fetchName, fetchGenera } from "@/service/species";
 
 // 一覧画面表示用データの取得
 const fetchListPageItem = async (
@@ -42,11 +38,11 @@ const fetchDetailPageItem = async (
   const pokemonSpecies = await fetchPokemonSpecies(id);
   if (!pokemonSpecies) return undefined;
   const name = await fetchName(id, pokemonSpecies); // 名前
-  const species = await fetchSpecies(id, pokemonSpecies); // 分類
+  const genera = await fetchGenera(id, pokemonSpecies); // 分類
   const image = await fetchImage(id, pokemon); // 画像
   const types = await fetchTypes(id, pokemon); // タイプ
   const abilities = await fetchAbilities(id, pokemon); // 特性
-  return { id, name, species, image, types, abilities };
+  return { id, name, genera, image, types, abilities };
 };
 
 export { fetchListPageItem, fetchDetailPageItem };

@@ -14,7 +14,7 @@ declare type ListPageItem = {
 declare type DetailPokemon = {
   id: string;
   name: string | undefined;
-  species: string | undefined;
+  genera: string | undefined;
   image: string | undefined;
   types: string[] | undefined;
   abilities: string[] | undefined;
