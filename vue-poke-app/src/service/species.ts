@@ -1,11 +1,11 @@
 import axios from "axios";
 import { getJapaneseValue } from "@/service/utils";
 
-const SPECIESI_URL = import.meta.env.VITE_SPECIESI_URL;
+const SPECIES_URL = import.meta.env.VITE_SPECIES_URL;
 
 // ポケモンの種類(英語)を取得する関数
 const fetchPokemonSpecies = async (id: string): Promise<PokemonSpecies> => {
-  const pokemonSpecies = (await axios.get(`${SPECIESI_URL}/${id}`)).data;
+  const pokemonSpecies = (await axios.get(`${SPECIES_URL}/${id}`)).data;
   return pokemonSpecies;
 };
 
