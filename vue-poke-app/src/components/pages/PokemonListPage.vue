@@ -1,89 +1,34 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import PokemonListCard from "@parts/card/PokemonListCard.vue";
-import axios from "axios";
-let pokemonList = reactive<Pokemon[]>([]);
-const loading = ref(false);
+import { fetchListPageItem } from "@/service/index";
 
-const nextPokemonListUrl = ref<string>("");
+let pokemonList = reactive<ProcessedPokemonList>([]);
+const loading = ref<boolean>(false);
+const nextUrl = ref<string>("");
 
 onMounted(async () => {
-  const response = await axios.get("https://pokeapi.co/api/v2/pokemon");
-  nextPokemonListUrl.value = response.data.next;
-  const pokemonPromises = response.data.results.map(
-    async (pokemon: Pokemon) => {
-      const id = (pokemon.url as string).split("/").filter(Boolean).pop();
-      // https://pokeapi.co/docs/v2#pokemon-section (Pokemon (endpoint))
-      const responseForImage = await axios.get(
-        `https://pokeapi.co/api/v2/pokemon/${id}`
-      );
-      const image =
-        responseForImage.data.sprites.other["official-artwork"].front_default;
-
-      // https://pokeapi.co/docs/v2#pokemon-section (Pokemon Species (endpoint))
-      const responseForJapaneseName = await axios.get(
-        `https://pokeapi.co/api/v2/pokemon-species/${id}`
-      );
-
-      const japaneseName = responseForJapaneseName.data.names.find(
-        (name: { language: { name: string } }) => name.language.name === "ja"
-      ).name;
-
-      return {
-        name: japaneseName,
-        id,
-        image,
-      };
-    }
+  const listPageItem: ListPageItem | undefined = await fetchListPageItem();
+  if (!listPageItem) return;
+  nextUrl.value = listPageItem.nextUrl;
+  listPageItem.processedPokemonList.forEach((pokemon) =>
+    pokemonList.push(pokemon)
   );
-  // 全ての非同期処理が完了するまで待つ;
-  const resolvedPokemonList = await Promise.all(pokemonPromises);
-
-  // 順番が保たれた状態でpokemonListに追加;
-  resolvedPokemonList.forEach((pokemon) => pokemonList.push(pokemon));
 });
 
 const fetchPokemonDetails = async () => {
   loading.value = true;
-  const response = await axios.get(nextPokemonListUrl.value);
-  nextPokemonListUrl.value = response.data.next;
-  const pokemonPromises = response.data.results.map(
-    async (pokemon: Pokemon) => {
-      const id = (pokemon.url as string).split("/").filter(Boolean).pop();
-      const responseForImage = await axios.get(
-        `https://pokeapi.co/api/v2/pokemon/${id}`
-      );
-      const image =
-        responseForImage.data.sprites.other["official-artwork"].front_default;
-
-      const responseForJapaneseName = await axios.get(
-        `https://pokeapi.co/api/v2/pokemon-species/${id}`
-      );
-
-      const japaneseName = responseForJapaneseName.data.names.find(
-        (name: { language: { name: string } }) => name.language.name === "ja"
-      ).name;
-
-      return {
-        name: japaneseName,
-        id,
-        image,
-      };
-    }
+  const additionalListPageItem: ListPageItem | undefined =
+    await fetchListPageItem(nextUrl.value);
+  if (!additionalListPageItem) {
+    loading.value = false;
+    return;
+  }
+  nextUrl.value = additionalListPageItem.nextUrl;
+  additionalListPageItem.processedPokemonList.forEach((pokemon) =>
+    pokemonList.push(pokemon)
   );
-  // 全ての非同期処理が完了するまで待つ;
-  const resolvedPokemonList = await Promise.all(pokemonPromises);
-
-  // 順番が保たれた状態でpokemonListに追加;
-  resolvedPokemonList.forEach((pokemon) => pokemonList.push(pokemon));
   loading.value = false;
-};
-
-type Pokemon = {
-  name: string;
-  url?: string;
-  id?: string;
-  image?: string;
 };
 </script>
 
