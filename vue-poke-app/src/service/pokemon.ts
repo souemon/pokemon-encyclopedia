@@ -13,7 +13,8 @@ const fetchTypes = async (
     const pokemon = _pokemon ? await _pokemon : await fetchPokemon(id);
     if (!pokemon) return undefined;
     const urls: string[] = pokemon.types.map((data) => data.type.url);
-    urls.forEach(async (url) => {
+    // Promise.allで全ての非同期処理が完了するまで待つ
+    const typePromises = urls.map(async (url) => {
       const response: FetchType = await axios.get(url);
       const names: Type = response.data.names;
       const type = getJapaneseValue(names);
@@ -21,6 +22,8 @@ const fetchTypes = async (
         types.push(type);
       }
     });
+    await Promise.all(typePromises);
+    if (types.length === 0) return undefined;
     return types;
   } catch (error) {
     return undefined;
@@ -37,14 +40,17 @@ const fetchAbilities = async (
     const pokemon = _pokemon ? await _pokemon : await fetchPokemon(id);
     if (!pokemon) return undefined;
     const urls: string[] = pokemon.abilities.map((item) => item.ability.url);
-    urls.forEach(async (url) => {
-      const response: FetchAbilities = await axios.get(url);
-      const names: Ability = response.data.names;
+    // Promise.allで全ての非同期処理が完了するまで待つ
+    const abilityPromises = urls.map(async (url) => {
+      const response: FetchType = await axios.get(url);
+      const names: Type = response.data.names;
       const ability = getJapaneseValue(names);
       if (ability) {
         abilities.push(ability);
       }
     });
+    await Promise.all(abilityPromises);
+    if (abilities.length === 0) return undefined;
     return abilities;
   } catch (error) {
     return undefined;
