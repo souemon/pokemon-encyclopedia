@@ -1,76 +1,43 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import axios from "axios";
+import { fetchDetailPageItem } from "@/service/index";
 
 const route = useRoute();
 const parameter = route.params;
-// パラメータからid（No.）を取得
-const id = ref<string>(parameter.id as string);
+const id = ref<string>(parameter.id as string); // パラメータからid（No.）を取得
 
-const japaneseName = ref<string>("");
-const image = ref<string>("");
-const genus = ref<string>("");
+const name = ref<string | undefined>("");
+const image = ref<string | undefined>("");
+const genera = ref<string | undefined>("");
 const types = reactive<string[]>([]);
 const abilities = reactive<string[]>([]);
 
-/* url */
-const baseUrl = "https://pokeapi.co/api/v2";
-const japaneseNameUrl = `${baseUrl}/pokemon-species/${id.value}/`; // 名前(日本語)
-const imageAndTypeAndAbilitiesUrl = `${baseUrl}/pokemon/${id.value}/`; // 画像 and タイプ and 特性
-const generaUrl = `https://pokeapi.co/api/v2/pokemon-species/${id.value}/`; // 分類
-
 onMounted(async () => {
-  // 名前(日本語)の取得
-  const responseForJapaneseName = await axios.get(japaneseNameUrl);
-  japaneseName.value = responseForJapaneseName.data.names.find(
-    (name: { language: { name: string } }) => name.language.name === "ja"
-  ).name;
-
-  // 分類の取得
-  const responseForGenera = await axios.get(generaUrl);
-  genus.value = responseForGenera.data.genera.find(
-    (genera: { genus: string; language: { name: string } }) =>
-      genera.language.name === "ja"
-  ).genus;
-
-  /* タイプ(日本語)と特性(日本語)と画像用のURLの取得 */
-  const responseForImageAndTypeAndAbilities = await axios.get(
-    imageAndTypeAndAbilitiesUrl
+  const detailPageItem: DetailPokemon | undefined = await fetchDetailPageItem(
+    id.value
   );
-  // タイプ(日本語)用URL
-  const japaneseTypeUrlArray: string[] =
-    responseForImageAndTypeAndAbilities.data.types.map(
-      (item: { type: { url: string } }) => item.type.url
-    );
-  // 日本語タイプ名の取得
-  japaneseTypeUrlArray.forEach(async (japaneseTypeUrl) => {
-    const responseForjapaneseType = await axios.get(japaneseTypeUrl);
-    const type = responseForjapaneseType.data.names.find(
-      (name: { language: { name: string } }) => name.language.name === "ja"
-    ).name;
-    types.push(type);
-  });
-  // 特性(日本語)用URL
-  const japaneseAbilitiesUrlArray: string[] =
-    responseForImageAndTypeAndAbilities.data.abilities.map(
-      (item: { ability: { url: string } }) => item.ability.url
-    );
-
-  // 特性(日本語)の取得
-  japaneseAbilitiesUrlArray.forEach(async (japaneseAbilitiesUrl) => {
-    const responseForjapaneseAbilitie = await axios.get(japaneseAbilitiesUrl);
-    const ability = responseForjapaneseAbilitie.data.names.find(
-      (name: { language: { name: string } }) => name.language.name === "ja"
-    ).name;
-    abilities.push(ability);
-  });
-
-  // 画像取得
-  image.value =
-    responseForImageAndTypeAndAbilities.data.sprites.other[
-      "official-artwork"
-    ].front_default;
+  if (!detailPageItem) {
+    name.value = "????";
+    image.value = "????";
+    genera.value = "????";
+    types.push("????");
+    abilities.push("????");
+    return;
+  }
+  name.value = detailPageItem.name;
+  image.value = detailPageItem.image;
+  genera.value = detailPageItem.genera;
+  if (detailPageItem.types) {
+    detailPageItem.types.forEach((type) => types.push(type));
+  } else {
+    types.push("????");
+  }
+  if (detailPageItem.abilities) {
+    detailPageItem.abilities.forEach((ability) => abilities.push(ability));
+  } else {
+    abilities.push("????");
+  }
 });
 </script>
 
@@ -87,13 +54,13 @@ onMounted(async () => {
 
             <!-- 名前 -->
             <v-card-title id="card_title" class="ml-5 font-weight-bold">
-              {{ japaneseName }}
+              {{ name }}
             </v-card-title>
 
             <!-- 分類 -->
             <div class="detail_info mt-5 ml-10 font-weight-bold">
               <p>▼分類</p>
-              <span>{{ genus }}</span>
+              <span>{{ genera }}</span>
             </div>
 
             <!-- タイプ -->
