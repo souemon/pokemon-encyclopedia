@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getJapaneseValue } from "@/service/utils";
 
-const POKEMON_URL = import.meta.env.VITE_POKEMON_URL;
+const POKEMON_URL = "https://pokeapi.co/api/v2/pokemon";
 
 // 「タイプ」を取得する関数
 const fetchTypes = async (
