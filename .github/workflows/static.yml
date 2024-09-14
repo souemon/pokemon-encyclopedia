@@ -41,8 +41,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_POKEMON_URL: ${{ secrets.VITE_POKEMON_URL }}
-          VITE_SPECIES_URL: ${{ secrets.VITE_SPECIES_URL }}
+          VITE_POKEMON_URL: ${{ vars.VITE_POKEMON_URL }}
+          VITE_SPECIES_URL: ${{ vars.VITE_SPECIES_URL }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
