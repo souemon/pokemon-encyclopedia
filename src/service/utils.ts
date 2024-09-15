@@ -1,10 +1,10 @@
-// 「No.」を取得する関数
+// 「図鑑No.」を取得する関数
 const extractIdFromUrl = (url: string): string => {
   const id = url.split("/").filter(Boolean).pop()!;
   return id;
 };
 
-// 日本語の分類を取得する関数
+// 日本語名を取得する関数
 const getJapaneseValue = (
   languageArray: Genera | Names | Type | Ability
 ): string | undefined => {
