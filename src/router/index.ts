@@ -9,7 +9,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory("/vue-poke-app/"),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
 
