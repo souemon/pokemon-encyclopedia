@@ -43,12 +43,12 @@ onMounted(async () => {
 
 <template>
   <v-container>
-    <v-card class="mx-auto" max-width="45vw" elevation="3">
-      <v-sheet width="45vw">
+    <v-card class="mx-auto" max-width="80vw" elevation="3">
+      <v-sheet width="70vw">
         <v-row>
           <v-col cols="6">
             <!-- No. -->
-            <div id="card_subtitle" class="mt-6 ml-10 font-weight-bold">
+            <div id="card_subtitle" class="mt-6 ml-9 font-weight-bold">
               No.{{ id }}
             </div>
 
@@ -94,13 +94,13 @@ onMounted(async () => {
 
 <style scoped>
 #card_subtitle {
-  font-size: 1.6vw;
+  font-size: max(1.4vw, 13px);
   color: #000000 !important;
 }
 #card_title {
-  font-size: 2.4vw;
+  font-size: max(2.4vw, 14px);
 }
 .detail_info {
-  font-size: 1.4vw;
+  font-size: max(1.4vw, 13px);
 }
 </style>
