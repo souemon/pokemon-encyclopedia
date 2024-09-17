@@ -12,6 +12,7 @@
       "@pages/*": ["src/components/pages/*"],
       "@parts/*": ["src/components/parts/*"]
     },
+    "types": ["vitest/globals"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
