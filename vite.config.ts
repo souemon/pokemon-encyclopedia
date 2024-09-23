@@ -18,5 +18,9 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
+    env: {
+      VITE_POKEMON_URL: "TEST_VITE_POKEMON_URL",
+      VITE_SPECIES_URL: "TEST_VITE_SPECIES_URL",
+    },
   },
 });
