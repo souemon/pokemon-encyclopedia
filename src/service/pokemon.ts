@@ -10,7 +10,7 @@ const fetchTypes = async (
 ): Promise<string[] | undefined> => {
   let types: string[] = [];
   try {
-    const pokemon = _pokemon ? await _pokemon : await fetchPokemon(id);
+    const pokemon = _pokemon ? await _pokemon : await self.fetchPokemon(id);
     if (!pokemon) return undefined;
     const urls: string[] = pokemon.types.map((data) => data.type.url);
     // Promise.allで全ての非同期処理が完了するまで待つ
@@ -37,7 +37,7 @@ const fetchAbilities = async (
 ): Promise<string[] | undefined> => {
   let abilities: string[] = [];
   try {
-    const pokemon = _pokemon ? await _pokemon : await fetchPokemon(id);
+    const pokemon = _pokemon ? await _pokemon : await self.fetchPokemon(id);
     if (!pokemon) return undefined;
     const urls: string[] = pokemon.abilities.map((item) => item.ability.url);
     // Promise.allで全ての非同期処理が完了するまで待つ
@@ -64,7 +64,7 @@ const fetchImage = async (
 ): Promise<string | undefined> => {
   let image;
   try {
-    const pokemon = _pokemon ? await _pokemon : await fetchPokemon(id);
+    const pokemon = _pokemon ? await _pokemon : await self.fetchPokemon(id);
     if (!pokemon) return undefined;
     image = pokemon.sprites.other["official-artwork"].front_default;
   } catch (error) {
@@ -82,6 +82,11 @@ const fetchPokemon = async (id: string): Promise<Pokemon | undefined> => {
     pokemon = undefined;
   }
   return pokemon;
+};
+
+// 別モジュールにすべきかも（https://makky12.hatenablog.com/entry/2021/02/08/120500）
+const self = {
+  fetchPokemon,
 };
 
 // ポケモンの概要リスト(英語)を20件取得する関数
@@ -103,10 +108,4 @@ const fetchPokemonList = async (
   return result;
 };
 
-export {
-  fetchTypes,
-  fetchAbilities,
-  fetchImage,
-  fetchPokemon,
-  fetchPokemonList,
-};
+export { fetchTypes, fetchAbilities, fetchImage, self, fetchPokemonList };

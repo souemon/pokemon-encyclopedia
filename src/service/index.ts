@@ -3,7 +3,7 @@ import {
   fetchTypes,
   fetchAbilities,
   fetchImage,
-  fetchPokemon,
+  self,
   fetchPokemonList,
 } from "@/service/pokemon";
 import { fetchPokemonSpecies, fetchName, fetchGenera } from "@/service/species";
@@ -33,7 +33,7 @@ const fetchListPageItem = async (
 const fetchDetailPageItem = async (
   id: string
 ): Promise<DetailPokemon | undefined> => {
-  const pokemon = await fetchPokemon(id);
+  const pokemon = await self.fetchPokemon(id);
   if (!pokemon) return undefined;
   const pokemonSpecies = await fetchPokemonSpecies(id);
   if (!pokemonSpecies) return undefined;
