@@ -195,4 +195,40 @@ describe("pokemon.ts", () => {
       });
     });
   });
+
+  describe("fetchImage", () => {
+    describe("正常系", () => {
+      type FetchPokemon = typeof Pokemon.self.fetchPokemon;
+      let spyFetchPokemon: MockInstance<FetchPokemon>;
+      beforeEach(() => {
+        spyFetchPokemon = vi
+          .spyOn(Pokemon.self, "fetchPokemon")
+          .mockResolvedValue(mockPokemonBaseInfo);
+      });
+      test("_pokemonを引数で受け取らない場合、fetchPokemon関数を呼ぶこと", async () => {
+        await Pokemon.fetchImage(pokemonNumber);
+        expect(spyFetchPokemon).toHaveBeenCalledTimes(1);
+        expect(spyFetchPokemon).toHaveBeenCalledWith(pokemonNumber);
+      });
+      test("_pokemonを引数で受け取る場合、fetchPokemon関数を呼ばないこと", async () => {
+        await Pokemon.fetchImage(pokemonNumber, mockPokemonBaseInfo);
+        expect(spyFetchPokemon).toHaveBeenCalledTimes(0);
+      });
+      test("画像のURLを返すこと", async () => {
+        const result = await Pokemon.fetchImage(pokemonNumber);
+        expect(result).toBe("testImage");
+      });
+    });
+    describe("異常系", () => {
+      test("fetchPokemonに失敗したときにundefinedを返すこと", async () => {
+        const spyFetchPokemon = vi
+          .spyOn(Pokemon.self, "fetchPokemon")
+          .mockRejectedValue(new Error("failed fetchPokemon"));
+        const result = await Pokemon.fetchImage(pokemonNumber);
+        expect(spyFetchPokemon).toHaveBeenCalledTimes(1);
+        expect(spyFetchPokemon).toHaveBeenCalledWith(pokemonNumber);
+        expect(result).toBeUndefined();
+      });
+    });
+  });
 });
