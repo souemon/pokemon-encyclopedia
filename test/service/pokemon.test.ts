@@ -12,6 +12,16 @@ const VITE_POKEMON_URL = "TEST_VITE_POKEMON_URL";
 
 describe("pokemon.ts", () => {
   const pokemonNumber = "1";
+  const mockPokemonBaseInfo: Pokemon = {
+    sprites: {
+      other: { "official-artwork": { front_default: "testImage" } },
+    },
+    abilities: [
+      { ability: { url: "testUrl1" } },
+      { ability: { url: "testUrl2" } },
+    ],
+    types: [{ type: { url: "testUrl1" } }, { type: { url: "testUrl2" } }],
+  };
 
   afterEach(() => {
     vi.resetAllMocks();
@@ -73,13 +83,6 @@ describe("pokemon.ts", () => {
   });
 
   describe("fetchTypes", () => {
-    const mockPokemon: Pokemon = {
-      sprites: {
-        other: { "official-artwork": { front_default: "testImage" } },
-      },
-      abilities: [{ ability: { url: "testUrl" } }],
-      types: [{ type: { url: "testUrl1" } }, { type: { url: "testUrl2" } }],
-    };
     const mockFetchType: FetchType = {
       data: {
         names: [
@@ -94,7 +97,7 @@ describe("pokemon.ts", () => {
       beforeEach(() => {
         spyFetchPokemon = vi
           .spyOn(Pokemon.self, "fetchPokemon")
-          .mockResolvedValue(mockPokemon);
+          .mockResolvedValue(mockPokemonBaseInfo);
       });
       test("_pokemonを引数で受け取らない場合、fetchPokemon関数を呼ぶこと", async () => {
         await Pokemon.fetchTypes(pokemonNumber);
@@ -102,7 +105,7 @@ describe("pokemon.ts", () => {
         expect(spyFetchPokemon).toHaveBeenCalledWith(pokemonNumber);
       });
       test("_pokemonを引数で受け取る場合、fetchPokemon関数を呼ばないこと", async () => {
-        await Pokemon.fetchTypes(pokemonNumber, mockPokemon);
+        await Pokemon.fetchTypes(pokemonNumber, mockPokemonBaseInfo);
         expect(spyFetchPokemon).toHaveBeenCalledTimes(0);
       });
       test("タイプの配列を返すこと", async () => {
@@ -126,8 +129,67 @@ describe("pokemon.ts", () => {
       });
       test("axios.getに失敗したときにundefinedを返すこと", async () => {
         mockedAxios.get.mockRejectedValue(new Error("failed get"));
-        vi.spyOn(Pokemon.self, "fetchPokemon").mockResolvedValue(mockPokemon);
+        vi.spyOn(Pokemon.self, "fetchPokemon").mockResolvedValue(
+          mockPokemonBaseInfo
+        );
         const result = await Pokemon.fetchTypes(pokemonNumber);
+        expect(mockedAxios.get).toHaveBeenCalled();
+        expect(result).toBeUndefined();
+      });
+    });
+  });
+
+  describe("fetchAbilities", () => {
+    const mockFetchAbilities: FetchAbilities = {
+      data: {
+        names: [
+          { name: "testAbility", language: { name: "en" } },
+          { name: "testAbility", language: { name: "ja" } },
+        ],
+      },
+    };
+    describe("正常系", () => {
+      type FetchPokemon = typeof Pokemon.self.fetchPokemon;
+      let spyFetchPokemon: MockInstance<FetchPokemon>;
+      beforeEach(() => {
+        spyFetchPokemon = vi
+          .spyOn(Pokemon.self, "fetchPokemon")
+          .mockResolvedValue(mockPokemonBaseInfo);
+      });
+      test("_pokemonを引数で受け取らない場合、fetchPokemon関数を呼ぶこと", async () => {
+        await Pokemon.fetchAbilities(pokemonNumber);
+        expect(spyFetchPokemon).toHaveBeenCalledTimes(1);
+        expect(spyFetchPokemon).toHaveBeenCalledWith(pokemonNumber);
+      });
+      test("_pokemonを引数で受け取る場合、fetchPokemon関数を呼ばないこと", async () => {
+        await Pokemon.fetchAbilities(pokemonNumber, mockPokemonBaseInfo);
+        expect(spyFetchPokemon).toHaveBeenCalledTimes(0);
+      });
+      test("タイプの配列を返すこと", async () => {
+        mockedAxios.get.mockResolvedValue(mockFetchAbilities);
+        const result = await Pokemon.fetchAbilities(pokemonNumber);
+        expect(mockedAxios.get).toHaveBeenCalledTimes(2);
+        expect(mockedAxios.get).toHaveBeenNthCalledWith(1, "testUrl1");
+        expect(mockedAxios.get).toHaveBeenNthCalledWith(2, "testUrl2");
+        expect(result).toEqual(["testAbility", "testAbility"]);
+      });
+    });
+    describe("異常系", () => {
+      test("fetchPokemonに失敗したときにundefinedを返すこと", async () => {
+        const spyFetchPokemon = vi
+          .spyOn(Pokemon.self, "fetchPokemon")
+          .mockRejectedValue(new Error("failed fetchPokemon"));
+        const result = await Pokemon.fetchAbilities(pokemonNumber);
+        expect(spyFetchPokemon).toHaveBeenCalledTimes(1);
+        expect(spyFetchPokemon).toHaveBeenCalledWith(pokemonNumber);
+        expect(result).toBeUndefined();
+      });
+      test("axios.getに失敗したときにundefinedを返すこと", async () => {
+        mockedAxios.get.mockRejectedValue(new Error("failed get"));
+        vi.spyOn(Pokemon.self, "fetchPokemon").mockResolvedValue(
+          mockPokemonBaseInfo
+        );
+        const result = await Pokemon.fetchAbilities(pokemonNumber);
         expect(mockedAxios.get).toHaveBeenCalled();
         expect(result).toBeUndefined();
       });
