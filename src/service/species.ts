@@ -4,8 +4,15 @@ import { getJapaneseValue } from "@/service/utils";
 const SPECIES_URL = import.meta.env.VITE_SPECIES_URL;
 
 // ポケモンの種類(英語)を取得する関数
-const fetchPokemonSpecies = async (id: string): Promise<PokemonSpecies> => {
-  const pokemonSpecies = (await axios.get(`${SPECIES_URL}/${id}`)).data;
+const fetchPokemonSpecies = async (
+  id: string
+): Promise<PokemonSpecies | undefined> => {
+  let pokemonSpecies;
+  try {
+    pokemonSpecies = (await axios.get(`${SPECIES_URL}/${id}`)).data;
+  } catch (error) {
+    pokemonSpecies = undefined;
+  }
   return pokemonSpecies;
 };
 
@@ -21,9 +28,10 @@ const fetchName = async (
 ): Promise<string | undefined> => {
   let name: string | undefined;
   try {
-    const pokemonSpecies: PokemonSpecies = _pokemonSpecies
+    const pokemonSpecies: PokemonSpecies | undefined = _pokemonSpecies
       ? await _pokemonSpecies
       : await fetchPokemonSpecies(id);
+    if (!pokemonSpecies) return undefined;
     name = getJapaneseValue(pokemonSpecies.names);
   } catch (error) {
     name = undefined;
@@ -38,9 +46,10 @@ const fetchGenera = async (
 ): Promise<string | undefined> => {
   let genera: string | undefined;
   try {
-    const pokemonSpecies: PokemonSpecies = _pokemonSpecies
+    const pokemonSpecies: PokemonSpecies | undefined = _pokemonSpecies
       ? await _pokemonSpecies
       : await fetchPokemonSpecies(id);
+    if (!pokemonSpecies) return undefined;
     genera = getJapaneseValue(pokemonSpecies.genera);
   } catch (error) {
     genera = undefined;
