@@ -3,10 +3,14 @@ import {
   fetchTypes,
   fetchAbilities,
   fetchImage,
-  self,
+  self as Pokemon,
   fetchPokemonList,
 } from "@/service/pokemon";
-import { fetchPokemonSpecies, fetchName, fetchGenera } from "@/service/species";
+import {
+  self as PokemonSpecies,
+  fetchName,
+  fetchGenera,
+} from "@/service/species";
 
 // 一覧画面表示用データの取得
 const fetchListPageItem = async (
@@ -33,9 +37,9 @@ const fetchListPageItem = async (
 const fetchDetailPageItem = async (
   id: string
 ): Promise<DetailPokemon | undefined> => {
-  const pokemon = await self.fetchPokemon(id);
+  const pokemon = await Pokemon.fetchPokemon(id);
   if (!pokemon) return undefined;
-  const pokemonSpecies = await fetchPokemonSpecies(id);
+  const pokemonSpecies = await PokemonSpecies.fetchPokemonSpecies(id);
   if (!pokemonSpecies) return undefined;
   const name = await fetchName(id, pokemonSpecies); // 名前
   const genera = await fetchGenera(id, pokemonSpecies); // 分類

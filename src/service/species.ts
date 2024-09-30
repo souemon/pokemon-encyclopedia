@@ -9,6 +9,11 @@ const fetchPokemonSpecies = async (id: string): Promise<PokemonSpecies> => {
   return pokemonSpecies;
 };
 
+// 別モジュールにすべきかも（https://makky12.hatenablog.com/entry/2021/02/08/120500）
+const self = {
+  fetchPokemonSpecies,
+};
+
 // 「名前」を取得する関数
 const fetchName = async (
   id: string,
@@ -43,4 +48,4 @@ const fetchGenera = async (
   return genera;
 };
 
-export { fetchPokemonSpecies, fetchName, fetchGenera };
+export { self, fetchName, fetchGenera };
