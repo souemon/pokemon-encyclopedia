@@ -86,8 +86,8 @@ describe("pokemon.ts", () => {
     const mockFetchType: FetchType = {
       data: {
         names: [
-          { name: "testType", language: { name: "en" } },
-          { name: "testType", language: { name: "ja" } },
+          { name: "testTypeEn", language: { name: "en" } },
+          { name: "testTypeJa", language: { name: "ja" } },
         ],
       },
     };
@@ -114,7 +114,7 @@ describe("pokemon.ts", () => {
         expect(mockedAxios.get).toHaveBeenCalledTimes(2);
         expect(mockedAxios.get).toHaveBeenNthCalledWith(1, "testUrl1");
         expect(mockedAxios.get).toHaveBeenNthCalledWith(2, "testUrl2");
-        expect(result).toEqual(["testType", "testType"]);
+        expect(result).toEqual(["testTypeJa", "testTypeJa"]);
       });
     });
     describe("異常系", () => {
@@ -143,8 +143,8 @@ describe("pokemon.ts", () => {
     const mockFetchAbilities: FetchAbilities = {
       data: {
         names: [
-          { name: "testAbility", language: { name: "en" } },
-          { name: "testAbility", language: { name: "ja" } },
+          { name: "testAbilityEn", language: { name: "en" } },
+          { name: "testAbilityJa", language: { name: "ja" } },
         ],
       },
     };
@@ -171,7 +171,7 @@ describe("pokemon.ts", () => {
         expect(mockedAxios.get).toHaveBeenCalledTimes(2);
         expect(mockedAxios.get).toHaveBeenNthCalledWith(1, "testUrl1");
         expect(mockedAxios.get).toHaveBeenNthCalledWith(2, "testUrl2");
-        expect(result).toEqual(["testAbility", "testAbility"]);
+        expect(result).toEqual(["testAbilityJa", "testAbilityJa"]);
       });
     });
     describe("異常系", () => {
