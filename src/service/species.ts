@@ -30,7 +30,7 @@ const fetchName = async (
   try {
     const pokemonSpecies: PokemonSpecies | undefined = _pokemonSpecies
       ? await _pokemonSpecies
-      : await fetchPokemonSpecies(id);
+      : await self.fetchPokemonSpecies(id);
     if (!pokemonSpecies) return undefined;
     name = getJapaneseValue(pokemonSpecies.names);
   } catch (error) {
@@ -48,7 +48,7 @@ const fetchGenera = async (
   try {
     const pokemonSpecies: PokemonSpecies | undefined = _pokemonSpecies
       ? await _pokemonSpecies
-      : await fetchPokemonSpecies(id);
+      : await self.fetchPokemonSpecies(id);
     if (!pokemonSpecies) return undefined;
     genera = getJapaneseValue(pokemonSpecies.genera);
   } catch (error) {
