@@ -35,12 +35,14 @@ describe("index.ts", () => {
     };
     const mockPokemonName = "testNameJa";
     const mockPokemonImage = "testUrl";
-    vi.mocked(fetchPokemonList).mockResolvedValue(
-      mockFetchListPageItemResponse
-    );
-    vi.mocked(fetchName).mockResolvedValue(mockPokemonName);
-    vi.mocked(fetchImage).mockResolvedValue(mockPokemonImage);
+
     describe("正常系", () => {
+      vi.mocked(fetchPokemonList).mockResolvedValue(
+        mockFetchListPageItemResponse
+      );
+      vi.mocked(fetchName).mockResolvedValue(mockPokemonName);
+      vi.mocked(fetchImage).mockResolvedValue(mockPokemonImage);
+
       test("_nextUrlを引数で受け取らなかった場合、引数なしでfetchPokemonSpecies関数を呼ぶこと", async () => {
         await fetchListPageItem();
         expect(fetchPokemonList).toHaveBeenCalledTimes(1);
@@ -75,6 +77,42 @@ describe("index.ts", () => {
           nextUrl,
         };
         const result = await fetchListPageItem();
+        expect(result).toEqual(expectedReturn);
+      });
+    });
+
+    // 今の実装だとあまり意味のないケースかも
+    describe("異常系", () => {
+      test("fetchPokemonList関数でundefinedを受け取った場合、undefinedを返却すること", async () => {
+        vi.mocked(fetchPokemonList).mockResolvedValue(undefined);
+        const result = await fetchListPageItem();
+        expect(fetchPokemonList).toHaveBeenCalledTimes(1);
+        expect(result).toBeUndefined();
+      });
+      test("fetchName関数とfetchImage関数でundefinedを受け取った場合、返却するポケモンのリストのnameの値がundefinedとなっていること", async () => {
+        const mockProcessedPokemonItem = {
+          id: mockPokemonNumber,
+          name: undefined,
+          image: undefined,
+        };
+        const mockProcessedPokemonList = Array(20).fill(
+          mockProcessedPokemonItem
+        );
+        const expectedReturn = {
+          processedPokemonList: mockProcessedPokemonList,
+          nextUrl,
+        };
+        vi.mocked(fetchPokemonList).mockResolvedValue(
+          mockFetchListPageItemResponse
+        );
+        vi.mocked(fetchName).mockResolvedValue(undefined);
+        vi.mocked(fetchImage).mockResolvedValue(undefined);
+        const result = await fetchListPageItem();
+        expect(fetchPokemonList).toHaveBeenCalledTimes(1);
+        expect(fetchName).toHaveBeenCalledTimes(20);
+        expect(fetchName).toHaveBeenCalledWith(mockPokemonNumber);
+        expect(fetchImage).toHaveBeenCalledTimes(20);
+        expect(fetchImage).toHaveBeenCalledWith(mockPokemonNumber);
         expect(result).toEqual(expectedReturn);
       });
     });
