@@ -18,7 +18,7 @@ import {
 
 describe("index.ts", () => {
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("fetchListPageItem", () => {
