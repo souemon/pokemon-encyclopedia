@@ -18,7 +18,7 @@ import {
 
 describe("index.ts", () => {
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe("fetchListPageItem", () => {
@@ -34,14 +34,16 @@ describe("index.ts", () => {
       nextUrl: nextUrl,
     };
     const mockPokemonName = "testNameJa";
-    const mockPokemonImage = "testUrl";
+    const mockPokemonImage = "testImage";
 
     describe("正常系", () => {
-      vi.mocked(fetchPokemonList).mockResolvedValue(
-        mockFetchListPageItemResponse
-      );
-      vi.mocked(fetchName).mockResolvedValue(mockPokemonName);
-      vi.mocked(fetchImage).mockResolvedValue(mockPokemonImage);
+      beforeEach(() => {
+        vi.mocked(fetchPokemonList).mockResolvedValue(
+          mockFetchListPageItemResponse
+        );
+        vi.mocked(fetchName).mockResolvedValue(mockPokemonName);
+        vi.mocked(fetchImage).mockResolvedValue(mockPokemonImage);
+      });
 
       test("_nextUrlを引数で受け取らなかった場合、引数なしでfetchPokemonSpecies関数を呼ぶこと", async () => {
         await fetchListPageItem();
@@ -120,42 +122,44 @@ describe("index.ts", () => {
 
   describe("fetchDetailPageItem", () => {
     const id = "1";
+    const mockPokemonName = "testNameJa";
+    const mockPokemonGenera = "testGenusJa";
+    const mockPokemonImage = "testImage";
+    const mockPokemonBaseInfo: Pokemon = {
+      sprites: {
+        other: { "official-artwork": { front_default: mockPokemonImage } },
+      },
+      abilities: [
+        { ability: { url: "testUrl1" } },
+        { ability: { url: "testUrl2" } },
+      ],
+      types: [{ type: { url: "testUrl1" } }, { type: { url: "testUrl2" } }],
+    };
+    const mockPokemonSpecies: PokemonSpecies = {
+      names: [
+        { name: "testNameEn", language: { name: "en" } },
+        { name: mockPokemonName, language: { name: "ja" } },
+      ],
+      genera: [
+        { genus: "testGenusEn", language: { name: "en" } },
+        { genus: mockPokemonGenera, language: { name: "ja" } },
+      ],
+    };
+    const mockPokemonTypes = ["testTypeJa", "testTypeJa"];
+    const mockPokemonAbilities = ["testAbilityJa", "testAbilityJa"];
 
     describe("正常系", () => {
-      const mockPokemonBaseInfo: Pokemon = {
-        sprites: {
-          other: { "official-artwork": { front_default: "testImage" } },
-        },
-        abilities: [
-          { ability: { url: "testUrl1" } },
-          { ability: { url: "testUrl2" } },
-        ],
-        types: [{ type: { url: "testUrl1" } }, { type: { url: "testUrl2" } }],
-      };
-      const mockPokemonSpecies: PokemonSpecies = {
-        names: [
-          { name: "testNameEn", language: { name: "en" } },
-          { name: "testNameJa", language: { name: "ja" } },
-        ],
-        genera: [
-          { genus: "testGenusEn", language: { name: "en" } },
-          { genus: "testGenusJa", language: { name: "ja" } },
-        ],
-      };
-      const mockPokemonName = "testNameJa";
-      const mockPokemonGenera = "testGenusJa";
-      const mockPokemonImage = "testUrl";
-      const mockPokemonTypes = ["testTypeJa", "testTypeJa"];
-      const mockPokemonAbilities = ["testAbilityJa", "testAbilityJa"];
-      vi.mocked(Pokemon.fetchPokemon).mockResolvedValue(mockPokemonBaseInfo);
-      vi.mocked(PokemonSpecies.fetchPokemonSpecies).mockResolvedValue(
-        mockPokemonSpecies
-      );
-      vi.mocked(fetchName).mockResolvedValue(mockPokemonName);
-      vi.mocked(fetchGenera).mockResolvedValue(mockPokemonGenera);
-      vi.mocked(fetchImage).mockResolvedValue(mockPokemonImage);
-      vi.mocked(fetchTypes).mockResolvedValue(mockPokemonTypes);
-      vi.mocked(fetchAbilities).mockResolvedValue(mockPokemonAbilities);
+      beforeEach(() => {
+        vi.mocked(Pokemon.fetchPokemon).mockResolvedValue(mockPokemonBaseInfo);
+        vi.mocked(PokemonSpecies.fetchPokemonSpecies).mockResolvedValue(
+          mockPokemonSpecies
+        );
+        vi.mocked(fetchName).mockResolvedValue(mockPokemonName);
+        vi.mocked(fetchGenera).mockResolvedValue(mockPokemonGenera);
+        vi.mocked(fetchImage).mockResolvedValue(mockPokemonImage);
+        vi.mocked(fetchTypes).mockResolvedValue(mockPokemonTypes);
+        vi.mocked(fetchAbilities).mockResolvedValue(mockPokemonAbilities);
+      });
 
       test("fetchPokemon関数を正しい引数(id)で呼ぶこと", async () => {
         await fetchDetailPageItem(id);
@@ -197,6 +201,48 @@ describe("index.ts", () => {
           abilities: mockPokemonAbilities,
         };
         const result = await fetchDetailPageItem(id);
+        expect(result).toEqual(expectedReturn);
+      });
+    });
+
+    // 今の実装だとあまり意味のないケースかも
+    describe("異常系", () => {
+      test("fetchPokemon関数でundefinedを受け取った場合、undefinedを返却すること", async () => {
+        vi.mocked(Pokemon.fetchPokemon).mockResolvedValue(undefined);
+        const result = await fetchDetailPageItem(id);
+        expect(Pokemon.fetchPokemon).toHaveBeenCalledTimes(1);
+        expect(result).toBeUndefined();
+      });
+      test("fetchPokemonSpecies関数でundefinedを受け取った場合、undefinedを返却すること", async () => {
+        vi.mocked(Pokemon.fetchPokemon).mockResolvedValue(mockPokemonBaseInfo);
+        vi.mocked(PokemonSpecies.fetchPokemonSpecies).mockResolvedValue(
+          undefined
+        );
+        const result = await fetchDetailPageItem(id);
+        expect(PokemonSpecies.fetchPokemonSpecies).toHaveBeenCalledTimes(1);
+        expect(result).toBeUndefined();
+      });
+      test("各種情報でundefinedを受け取った場合、返却するポケモンのオブジェクトの各要素がundefinedとなっていること", async () => {
+        const expectedReturn = {
+          id,
+          name: undefined,
+          genera: undefined,
+          image: undefined,
+          types: undefined,
+          abilities: undefined,
+        };
+        vi.mocked(Pokemon.fetchPokemon).mockResolvedValue(mockPokemonBaseInfo);
+        vi.mocked(PokemonSpecies.fetchPokemonSpecies).mockResolvedValue(
+          mockPokemonSpecies
+        );
+        vi.mocked(fetchName).mockResolvedValue(undefined);
+        vi.mocked(fetchGenera).mockResolvedValue(undefined);
+        vi.mocked(fetchImage).mockResolvedValue(undefined);
+        vi.mocked(fetchTypes).mockResolvedValue(undefined);
+        vi.mocked(fetchAbilities).mockResolvedValue(undefined);
+
+        const result = await fetchDetailPageItem(id);
+
         expect(result).toEqual(expectedReturn);
       });
     });
