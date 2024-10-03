@@ -117,4 +117,88 @@ describe("index.ts", () => {
       });
     });
   });
+
+  describe("fetchDetailPageItem", () => {
+    const id = "1";
+
+    describe("正常系", () => {
+      const mockPokemonBaseInfo: Pokemon = {
+        sprites: {
+          other: { "official-artwork": { front_default: "testImage" } },
+        },
+        abilities: [
+          { ability: { url: "testUrl1" } },
+          { ability: { url: "testUrl2" } },
+        ],
+        types: [{ type: { url: "testUrl1" } }, { type: { url: "testUrl2" } }],
+      };
+      const mockPokemonSpecies: PokemonSpecies = {
+        names: [
+          { name: "testNameEn", language: { name: "en" } },
+          { name: "testNameJa", language: { name: "ja" } },
+        ],
+        genera: [
+          { genus: "testGenusEn", language: { name: "en" } },
+          { genus: "testGenusJa", language: { name: "ja" } },
+        ],
+      };
+      const mockPokemonName = "testNameJa";
+      const mockPokemonGenera = "testGenusJa";
+      const mockPokemonImage = "testUrl";
+      const mockPokemonTypes = ["testTypeJa", "testTypeJa"];
+      const mockPokemonAbilities = ["testAbilityJa", "testAbilityJa"];
+      vi.mocked(Pokemon.fetchPokemon).mockResolvedValue(mockPokemonBaseInfo);
+      vi.mocked(PokemonSpecies.fetchPokemonSpecies).mockResolvedValue(
+        mockPokemonSpecies
+      );
+      vi.mocked(fetchName).mockResolvedValue(mockPokemonName);
+      vi.mocked(fetchGenera).mockResolvedValue(mockPokemonGenera);
+      vi.mocked(fetchImage).mockResolvedValue(mockPokemonImage);
+      vi.mocked(fetchTypes).mockResolvedValue(mockPokemonTypes);
+      vi.mocked(fetchAbilities).mockResolvedValue(mockPokemonAbilities);
+
+      test("fetchPokemon関数を正しい引数(id)で呼ぶこと", async () => {
+        await fetchDetailPageItem(id);
+        expect(Pokemon.fetchPokemon).toHaveBeenCalledTimes(1);
+        expect(Pokemon.fetchPokemon).toHaveBeenCalledWith(id);
+      });
+      test("fetchPokemonSpecies関数を正しい引数(id)で呼ぶこと", async () => {
+        await fetchDetailPageItem(id);
+        expect(PokemonSpecies.fetchPokemonSpecies).toHaveBeenCalledTimes(1);
+        expect(PokemonSpecies.fetchPokemonSpecies).toHaveBeenCalledWith(id);
+      });
+      test("fetchName関数に引数idを正しく渡していること", async () => {
+        await fetchDetailPageItem(id);
+        expect(fetchName).toHaveBeenCalledWith(id, mockPokemonSpecies);
+      });
+      test("fetchGenera関数に引数idを正しく渡していること", async () => {
+        await fetchDetailPageItem(id);
+        expect(fetchGenera).toHaveBeenCalledWith(id, mockPokemonSpecies);
+      });
+      test("fetchImage関数に引数idを正しく渡していること", async () => {
+        await fetchDetailPageItem(id);
+        expect(fetchImage).toHaveBeenCalledWith(id, mockPokemonBaseInfo);
+      });
+      test("fetchTypes関数に引数idを正しく渡していること", async () => {
+        await fetchDetailPageItem(id);
+        expect(fetchTypes).toHaveBeenCalledWith(id, mockPokemonBaseInfo);
+      });
+      test("fetchAbilities関数に引数idを正しく渡していること", async () => {
+        await fetchDetailPageItem(id);
+        expect(fetchAbilities).toHaveBeenCalledWith(id, mockPokemonBaseInfo);
+      });
+      test("詳細画面の表示に必要なデータが揃ったオブジェクトを返却していること", async () => {
+        const expectedReturn = {
+          id,
+          name: mockPokemonName,
+          genera: mockPokemonGenera,
+          image: mockPokemonImage,
+          types: mockPokemonTypes,
+          abilities: mockPokemonAbilities,
+        };
+        const result = await fetchDetailPageItem(id);
+        expect(result).toEqual(expectedReturn);
+      });
+    });
+  });
 });
