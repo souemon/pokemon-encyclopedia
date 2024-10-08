@@ -22,5 +22,10 @@ export default defineConfig({
       VITE_POKEMON_URL: "TEST_VITE_POKEMON_URL",
       VITE_SPECIES_URL: "TEST_VITE_SPECIES_URL",
     },
+    server: {
+      deps: {
+        inline: ["vuetify"],
+      },
+    },
   },
 });
