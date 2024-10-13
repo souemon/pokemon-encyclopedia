@@ -5,13 +5,6 @@ import * as directives from "vuetify/directives";
 import PokemonDetailPage from "@pages/PokemonDetailPage.vue";
 import { fetchDetailPageItem } from "@/service/index";
 
-// wrapper.vm.[プロパティ]で型エラーを出さないための型定義
-declare module "@vue/runtime-core" {
-  interface ComponentCustomProperties {
-    nextUrl: string;
-  }
-}
-
 const vuetify = createVuetify({
   components,
   directives,
@@ -74,12 +67,5 @@ describe("PokemonDetailPage", () => {
       expect(wrapper.text()).toContain(detailPageItem.abilities![0]);
       expect(wrapper.text()).toContain(detailPageItem.abilities![1]);
     });
-
-    // test("ポケモンのタイプが正しく表示されていること", async () => {
-    //   await wrapper.vm.$nextTick();
-    //   detailPageItem.types.forEach((type) => {
-    //     expect(wrapper.text()).toContain(type);
-    //   });
-    // });
   });
 });
