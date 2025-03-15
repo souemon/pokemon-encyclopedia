@@ -34,7 +34,7 @@ const fetchPokemonDetails = async () => {
 
 <template>
   <v-container>
-    <v-row class="mx-auto d-flex justify-start">
+    <v-row dense justify="center">
       <template v-for="pokemon in pokemonList" :key="pokemon.id">
         <PokemonListCard
           :name="pokemon.name"
@@ -43,7 +43,7 @@ const fetchPokemonDetails = async () => {
         />
       </template>
     </v-row>
-    <v-row class="mt-10 mx-auto d-flex justify-center">
+    <v-row class="mt-10 mx-auto justify-center">
       <v-btn
         :disabled="loading"
         :loading="loading"
