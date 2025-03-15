@@ -8,7 +8,7 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
-      "@globals/*": ["src/components/globals/*"],
+      "@common/*": ["src/components/common/*"],
       "@pages/*": ["src/pages/*"],
       "@parts/*": ["src/components/parts/*"]
     },

@@ -9,7 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),
-      "@globals": resolve(__dirname, "src/components/globals"),
+      "@common": resolve(__dirname, "src/components/common"),
       "@pages": resolve(__dirname, "src/pages"),
       "@parts": resolve(__dirname, "src/components/parts"),
     },
