@@ -9,7 +9,7 @@
     "paths": {
       "@/*": ["src/*"],
       "@globals/*": ["src/components/globals/*"],
-      "@pages/*": ["src/components/pages/*"],
+      "@pages/*": ["src/pages/*"],
       "@parts/*": ["src/components/parts/*"]
     },
     "types": ["vitest/globals"],
