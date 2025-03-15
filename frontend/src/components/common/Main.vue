@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <v-main class="mx-auto">
+  <v-main class="bg-grey-lighten-4">
     <router-view />
   </v-main>
 </template>
