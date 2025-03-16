@@ -2,6 +2,7 @@
 
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import Unfonts from "unplugin-fonts/vite";
 import { resolve } from "path";
 
 export default defineConfig({
@@ -14,7 +15,14 @@ export default defineConfig({
       "@parts": resolve(__dirname, "src/components/parts"),
     },
   },
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    Unfonts({
+      google: {
+        families: ["Reggae One"],
+      },
+    }),
+  ],
   test: {
     globals: true,
     environment: "jsdom",

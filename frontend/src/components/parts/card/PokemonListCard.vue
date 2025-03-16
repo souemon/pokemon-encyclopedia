@@ -10,9 +10,6 @@ const props = defineProps(["name", "id", "image"]);
     min-width="150"
     :to="{ name: 'detail', params: { id: props.id } }"
   >
-    <v-card-subtitle class="text-subtitle-2 font-weight-medium"
-      >No.{{ props.id }}</v-card-subtitle
-    >
     <v-card-title class="text-subtitle-1 font-weight-bold">{{
       props.name
     }}</v-card-title>
@@ -24,5 +21,10 @@ const props = defineProps(["name", "id", "image"]);
 .v-card-subtitle {
   color: black !important;
   opacity: 1;
+  font-family: "Reggae One";
+}
+
+.v-card-title {
+  font-family: "Reggae One";
 }
 </style>
